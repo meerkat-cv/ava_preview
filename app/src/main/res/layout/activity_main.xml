@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="br.com.meerkat.avapreview.MainActivity">
+
+    <br.com.meerkat.avapreview.SurfaceOverlay
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/surfaceOverlayView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"/>
+
+    <br.com.meerkat.avapreview.CameraPreviewSurface
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/surfaceView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"/>
+
+
+    <ImageButton
+        android:layout_width="200px"
+        android:layout_height="200px"
+        android:id="@+id/changeCamButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_flip_camera"
+        android:scaleType="fitStart"
+        android:background="@null"/>
+
+
+</RelativeLayout>

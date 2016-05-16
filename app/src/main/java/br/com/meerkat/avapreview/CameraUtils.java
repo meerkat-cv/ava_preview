@@ -1,0 +1,107 @@
+package br.com.meerkat.avapreview;
+
+import android.hardware.Camera;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
+import android.os.Build;
+import android.util.Log;
+import android.view.SurfaceView;
+
+/**
+ * Created by gfuhr on 4/29/16.
+ */
+public class CameraUtils {
+    public static final String TAG = "CameraUtils";
+
+
+    public static byte[] rotateNV21(final byte[] yuv,
+                                    final int width,
+                                    final int height,
+                                    final int rotation)
+    {
+        if (rotation == 0) return yuv;
+        if (rotation % 90 != 0 || rotation < 0 || rotation > 270) {
+            throw new IllegalArgumentException("0 <= rotation < 360, rotation % 90 == 0");
+        }
+
+        final byte[]  output    = new byte[yuv.length];
+        final int     frameSize = width * height;
+        final boolean swap      = rotation % 180 != 0;
+        final boolean xflip     = rotation % 270 != 0;
+        final boolean yflip     = rotation >= 180;
+
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                final int yIn = j * width + i;
+                final int uIn = frameSize + (j >> 1) * width + (i & ~1);
+                final int vIn = uIn       + 1;
+
+                final int wOut     = swap  ? height              : width;
+                final int hOut     = swap  ? width               : height;
+                final int iSwapped = swap  ? j                   : i;
+                final int jSwapped = swap  ? i                   : j;
+                final int iOut     = xflip ? wOut - iSwapped - 1 : iSwapped;
+                final int jOut     = yflip ? hOut - jSwapped - 1 : jSwapped;
+
+                final int yOut = jOut * wOut + iOut;
+                final int uOut = frameSize + (jOut >> 1) * wOut + (iOut & ~1);
+                final int vOut = uOut + 1;
+
+                output[yOut] = (byte)(0xff & yuv[yIn]);
+                output[uOut] = (byte)(0xff & yuv[uIn]);
+                output[vOut] = (byte)(0xff & yuv[vIn]);
+            }
+        }
+        return output;
+    }
+
+
+    public static Camera openFrontFacingCameraGingerbread() {
+        int cameraCount = 0;
+        Camera cam = null;
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        cameraCount = Camera.getNumberOfCameras();
+        for (int camIdx = 0; camIdx < cameraCount; camIdx++) {
+            Camera.getCameraInfo(camIdx, cameraInfo);
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                try {
+                    cam = Camera.open(camIdx);
+                    /* if its emulated we do not need to rotate the preview */
+                    if (!Build.FINGERPRINT.startsWith("generic"))
+                        cam.setDisplayOrientation(90);
+                    /* for better support we expect NV21 type frames */
+
+                } catch (RuntimeException e) {
+                    Log.e(TAG, "Camera failed to open: " + e.getLocalizedMessage());
+                }
+            }
+        }
+
+        return cam;
+    }
+
+    public static Camera openBackFacingCameraGingerbread() {
+        int cameraCount = 0;
+        Camera cam = null;
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        cameraCount = Camera.getNumberOfCameras();
+        for (int camIdx = 0; camIdx < cameraCount; camIdx++) {
+            Camera.getCameraInfo(camIdx, cameraInfo);
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                try {
+                    cam = Camera.open(camIdx);
+                    /* if its emulated we do not need to rotate the preview */
+                    if (!Build.FINGERPRINT.startsWith("generic"))
+                        cam.setDisplayOrientation(90);
+                    /* for better support we expect NV21 type frames */
+
+                } catch (RuntimeException e) {
+                    Log.e(TAG, "Camera failed to open: " + e.getLocalizedMessage());
+                }
+            }
+        }
+
+        return cam;
+    }
+}
