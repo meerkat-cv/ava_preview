@@ -12,7 +12,7 @@ detection, landmark extraction and spoof detection (called Ava, hence Ava-Previe
 Just import the .aar related to the ava library to the project and run it on the
 emulator or smartphone. You should get some like this:
 
-![alt tag](https://raw.githubusercontent.com/meerkat-cv/ava_preview/master/demo.png =250px)
+![alt tag](https://raw.githubusercontent.com/meerkat-cv/ava_preview/master/demo.png =250x)
 
 
 Enjoy!
