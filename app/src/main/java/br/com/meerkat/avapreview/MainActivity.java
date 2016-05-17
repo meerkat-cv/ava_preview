@@ -42,6 +42,15 @@ public class MainActivity extends AppCompatActivity {
 
         // should request permission if android api > 23
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            boolean hasWritePermission = (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+            if (hasWritePermission == false) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_WRITE_EXTERNAL_STORAGE);
+            }
+            Ava.copyLandmarkModel(this);
+
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
@@ -53,23 +62,15 @@ public class MainActivity extends AppCompatActivity {
                 preview = (CameraPreviewSurface) findViewById(R.id.surfaceView);
                 preview.linkOverlay(overlay);
             }
-            boolean hasWritePermission = (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-            if (hasWritePermission == false) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        REQUEST_WRITE_EXTERNAL_STORAGE);
-            }
         } else {
+            Ava.copyLandmarkModel(this);
+
             setContentView(R.layout.activity_main);
 
             overlay = (SurfaceOverlay) findViewById(R.id.surfaceOverlayView);
             preview = (CameraPreviewSurface) findViewById(R.id.surfaceView);
             preview.linkOverlay(overlay);
         }
-
-        Ava.copyLandmarkModel(this);
-        
 
         final AppCompatImageButton button = (AppCompatImageButton) findViewById(R.id.changeCamButton);
         button.setOnClickListener(new View.OnClickListener() {
