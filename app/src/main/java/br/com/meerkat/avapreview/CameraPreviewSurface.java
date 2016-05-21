@@ -22,8 +22,7 @@ import br.com.meerkat.ava.Ava;
  * Created by meerkat on 4/29/16.
  */
 public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.Callback{
-
-    private Ava.CameraType camType;
+    private Ava.CameraType camType = Ava.CameraType.FRONT_CAMERA;
     private int cameraWidth = 640;
     private int cameraHeight = 480;
     private SurfaceHolder mHolder;
@@ -105,6 +104,9 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
         public static final String TAG = "CameraDetectorCaller";
         private double fps;
         private long lastTime;
+        private long lastTest = System.nanoTime();
+        private boolean testingSubject = false;
+        private int spoofResult = 0;
         private Ava detector = new Ava();
 
         public void onPreviewFrame(byte[] data, Camera cam) {
@@ -123,18 +125,65 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                 w = aux;
             }
 
-            Ava.FaceAndLandmarks face_and_landmarks = detector.detectLargestFaceAndLandmarks(data, w, h, camType);
-            Rect det = face_and_landmarks.face_;
-            List<Point> landmarks = face_and_landmarks.landmarks_;
-            Log.v(TAG, "faceDetection"+det);
+            if(System.nanoTime() - lastTest < 1000000000.0*5 && testingSubject == false) {
+                Ava.FaceAndLandmarks face_and_landmarks = detector.detectLargestFaceAndLandmarks(data, w, h, camType);
+                Rect det = face_and_landmarks.face_;
+                List<Point> landmarks = face_and_landmarks.landmarks_;
+                Log.v(TAG, "faceDetection"+det);
 
-            fps = 1000000000.0 / (System.nanoTime() - lastTime);
-            if (overlay != null) {
-                overlay.setFPS(fps);
-                overlay.setRectangle(det);
-                overlay.setPoints(landmarks);
+                fps = 1000000000.0 / (System.nanoTime() - lastTime);
+                if (overlay != null) {
+                    overlay.setFPS(fps);
+                    overlay.setRectangle(det);
+                    overlay.setPoints(landmarks);
+                    overlay.setSpoofResult(spoofResult);
+                    overlay.setBlinks(0, 0);
+                }
+                return;
+            }
+            else {
+                testingSubject = true;
+                Ava.FaceLandmarksBlink face_and_landmarks = detector.blinkActivity(data, w, h, camType);
+                Rect det = face_and_landmarks.face_;
+                List<Point> landmarks = face_and_landmarks.landmarks_;
+                Log.v(TAG, "faceDetection" + det);
+                spoofResult = 0;
+                if(face_and_landmarks.finished_) {
+                    if(face_and_landmarks.fraud_ == false)
+                        spoofResult = 1;
+                    else
+                        spoofResult = 2;
+
+                    testingSubject = false;
+                    lastTest = System.nanoTime();
+                }
+
+                fps = 1000000000.0 / (System.nanoTime() - lastTime);
+                if (overlay != null) {
+                    overlay.setFPS(fps);
+                    overlay.setRectangle(det);
+                    overlay.setPoints(landmarks);
+                    overlay.setSpoofResult(spoofResult);
+                    overlay.setBlinks(getBlink(landmarks), face_and_landmarks.conf_);
+                }
             }
         }
+    }
+
+
+    private float getBlink(List<Point> landmarks) {
+        double blink = 0.0f;
+        if(landmarks.size() > 0) {
+            double dx_h = landmarks.get(39).x - landmarks.get(36).x;
+            double dy_h = landmarks.get(39).y - landmarks.get(36).y;
+            double dx_v = landmarks.get(41).x - landmarks.get(37).x;
+            double dy_v = landmarks.get(41).y - landmarks.get(37).y;
+
+            blink = Math.sqrt(dx_v*dx_v + dy_v*dy_v)/Math.sqrt(dx_h*dx_h + dy_h*dy_h);
+            Log.v(TAG, "Not zero!! "+String.valueOf(dx_h)+" with blink: "+String.valueOf(blink));
+        }
+
+        return (float)blink;
     }
 
     void changeCamera() {
