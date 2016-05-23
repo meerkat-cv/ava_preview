@@ -125,7 +125,7 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                 w = aux;
             }
 
-            if(System.nanoTime() - lastTest < 1000000000.0*5 && testingSubject == false) {
+            if(System.nanoTime() - lastTest < 1000000000.0*5) {
                 Ava.FaceAndLandmarks face_and_landmarks = detector.detectLargestFaceAndLandmarks(data, w, h, camType);
                 Rect det = face_and_landmarks.face_;
                 List<Point> landmarks = face_and_landmarks.landmarks_;
@@ -148,14 +148,19 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                 List<Point> landmarks = face_and_landmarks.landmarks_;
                 Log.v(TAG, "faceDetection" + det);
                 spoofResult = 0;
-                if(face_and_landmarks.finished_) {
-                    if(face_and_landmarks.fraud_ == false)
+                if(face_and_landmarks.status_ != Ava.SpoofStatus.PROCESSING) {
+                    if(face_and_landmarks.status_ == Ava.SpoofStatus.REAL_PERSON) {
                         spoofResult = 1;
-                    else
+                        lastTest = System.nanoTime();
+                    }
+                    else if(face_and_landmarks.status_ == Ava.SpoofStatus.FRAUD) {
                         spoofResult = 2;
+                        lastTest = System.nanoTime();
+                    }
+                    else
+                        spoofResult = 3;
 
                     testingSubject = false;
-                    lastTest = System.nanoTime();
                 }
 
                 fps = 1000000000.0 / (System.nanoTime() - lastTime);
@@ -188,10 +193,12 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
 
     void changeCamera() {
         // first stop the current camera
-        mCamera.setPreviewCallback(null);
-        mCamera.stopPreview();
-        mHolder.removeCallback(this);
-        mCamera.release();
+        if(mCamera != null) {
+            mCamera.setPreviewCallback(null);
+            mCamera.stopPreview();
+            mHolder.removeCallback(this);
+            mCamera.release();
+        }
         mCamera = null;
 
         try {

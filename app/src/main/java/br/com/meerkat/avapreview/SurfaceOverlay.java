@@ -113,7 +113,8 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
                 if(spoofResult == 0)  paint_spoof.setColor(Color.WHITE);
                 if(spoofResult == 1)  paint_spoof.setColor(Color.GREEN);
                 if(spoofResult == 2)  paint_spoof.setColor(Color.RED);
-                paint_spoof.setStrokeWidth(30);
+                if(spoofResult == 3)  paint_spoof.setColor(Color.BLUE);
+                paint_spoof.setStrokeWidth(60);
                 canvas.drawLine(0, 0, canvas.getWidth(), 0, paint_spoof);
                 canvas.drawLine(canvas.getWidth(), 0, canvas.getWidth(), canvas.getHeight(), paint_spoof);
                 canvas.drawLine(canvas.getWidth(), canvas.getHeight(), 0, canvas.getHeight(), paint_spoof);
