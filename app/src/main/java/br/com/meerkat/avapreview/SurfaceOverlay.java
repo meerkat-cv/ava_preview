@@ -72,9 +72,6 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
         blinks[curr_blink] = blink1;
         blinks2[curr_blink] = blink2;
         curr_blink++;
-
-
-        Log.v(TAG, "blink "+Float.toString(blink1)+" on position "+String.valueOf(curr_blink));
     }
 
     class DrawingThread extends Thread {
@@ -127,7 +124,7 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
 
                 paint.setStyle(Paint.Style.FILL);
                 paint.setTextSize(40);
-                canvas.drawText("FPS:" + String.format("%.2f", getFPS()), 10, 50, paint);
+                canvas.drawText("FPS:" + String.format("%.2f", getFPS()), 60, 60, paint);
 
                 paint.setColor(Color.GREEN);
                 paint.setStrokeWidth(8);

@@ -76,6 +76,9 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
             mCamera.setParameters(parameters);
 
             mCamera.startPreview();
+            int w = mCamera.getParameters().getPreviewSize().width;
+            int h = mCamera.getParameters().getPreviewSize().height;
+            mCamDetector.setSize(w, h);
             mCamera.setPreviewCallback(mCamDetector);
 
         } catch (IOException e) {
@@ -108,15 +111,12 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
         private boolean testingSubject = false;
         private int spoofResult = 0;
         private Ava detector = new Ava();
+        private int w=100, h=100;
+
+        public void setSize(int W, int H) { w=W; h=H; }
 
         public void onPreviewFrame(byte[] data, Camera cam) {
             lastTime = System.nanoTime();
-            int w = cam.getParameters().getPreviewSize().width;
-            int h = cam.getParameters().getPreviewSize().height;
-
-            Log.v(TAG, "Frame size: " + w +     " " + h);
-
-
             //just to simulate a frontal camera :-) in case of emulator
             if (Build.FINGERPRINT.startsWith("generic")) {
                 data = CameraUtils.rotateNV21(data, w, h, 90);
@@ -129,7 +129,6 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                 Ava.FaceAndLandmarks face_and_landmarks = detector.detectLargestFaceAndLandmarks(data, w, h, camType);
                 Rect det = face_and_landmarks.face_;
                 List<Point> landmarks = face_and_landmarks.landmarks_;
-                Log.v(TAG, "faceDetection"+det);
 
                 fps = 1000000000.0 / (System.nanoTime() - lastTime);
                 if (overlay != null) {
@@ -146,7 +145,6 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                 Ava.FaceLandmarksBlink face_and_landmarks = detector.blinkActivity(data, w, h, camType);
                 Rect det = face_and_landmarks.face_;
                 List<Point> landmarks = face_and_landmarks.landmarks_;
-                Log.v(TAG, "faceDetection" + det);
                 spoofResult = 0;
                 if(face_and_landmarks.status_ != Ava.SpoofStatus.PROCESSING) {
                     if(face_and_landmarks.status_ == Ava.SpoofStatus.REAL_PERSON) {
@@ -210,12 +208,15 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                 mCamera = CameraUtils.openBackFacingCameraGingerbread();
                 camType = Ava.CameraType.BACK_CAMERA;
             }
+            int w = mCamera.getParameters().getPreviewSize().width;
+            int h = mCamera.getParameters().getPreviewSize().height;
             mCamera.setPreviewDisplay(mHolder);
             Camera.Parameters parameters = mCamera.getParameters();
             parameters.setPreviewSize(cameraWidth, cameraHeight);
             mCamera.setParameters(parameters);
 
             mCamera.startPreview();
+            mCamDetector.setSize(w, h);
             mCamera.setPreviewCallback(mCamDetector);
 
         } catch (IOException e) {
