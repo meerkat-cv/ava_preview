@@ -23,8 +23,12 @@ import static java.util.Arrays.fill;
  */
 public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callback{
     private static final String TAG = "SurfaceOverlay";
+    private int spoofResult;
     private Rect detection;
     private List<Point> landmarks;
+    private float[] blinks = new float[40];
+    private float[] blinks2 = new float[40];
+    private int curr_blink = 0;
     private DrawingThread drawingThread;
     private double[] FPS = new double[10];
     private int frameCount = 0;
@@ -59,6 +63,17 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
         this.scale = scale;
     }
 
+    public void setSpoofResult(int spoofResult) { this.spoofResult = spoofResult; }
+
+    public void setBlinks(float blink1, float blink2) {
+        if (curr_blink >= blinks.length)
+            curr_blink = curr_blink % blinks.length;
+
+        blinks[curr_blink] = blink1;
+        blinks2[curr_blink] = blink2;
+        curr_blink++;
+    }
+
     class DrawingThread extends Thread {
 
         private boolean mRun;
@@ -91,6 +106,17 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
             if (canvas != null) {
                 canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
+                Paint paint_spoof = new Paint();
+                if(spoofResult == 0)  paint_spoof.setColor(Color.WHITE);
+                if(spoofResult == 1)  paint_spoof.setColor(Color.GREEN);
+                if(spoofResult == 2)  paint_spoof.setColor(Color.RED);
+                if(spoofResult == 3)  paint_spoof.setColor(Color.BLUE);
+                paint_spoof.setStrokeWidth(60);
+                canvas.drawLine(0, 0, canvas.getWidth(), 0, paint_spoof);
+                canvas.drawLine(canvas.getWidth(), 0, canvas.getWidth(), canvas.getHeight(), paint_spoof);
+                canvas.drawLine(canvas.getWidth(), canvas.getHeight(), 0, canvas.getHeight(), paint_spoof);
+                canvas.drawLine(0, canvas.getHeight(), 0, 0, paint_spoof);
+
                 Paint paint = new Paint();
 
                 paint.setColor(Color.WHITE);
@@ -98,12 +124,26 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
 
                 paint.setStyle(Paint.Style.FILL);
                 paint.setTextSize(40);
-                canvas.drawText("FPS:" + String.format("%.2f", getFPS()), 10, 50, paint);
+                canvas.drawText("FPS:" + String.format("%.2f", getFPS()), 60, 60, paint);
 
                 paint.setColor(Color.GREEN);
+                paint.setStrokeWidth(8);
+
+                // Draw blinking debug
+//                int   dx = canvas.getWidth()/(blinks.length+3);
+//                float dy = 10*60.0f;
+//                for(int i=0; i<blinks.length-1; i++) {
+//                    int x1 = dx*(i+1);
+//                    int x2 = dx*(i+2);
+//                    canvas.drawLine(x1, (int)(blinks[i]*dy) + 300,
+//                            x2, (int)(blinks[i+1]*dy) + 300, paint);
+//
+//                    canvas.drawLine(x1, (int)(blinks2[i]*dy) + 150,
+//                            x2, (int)(blinks2[i+1]*dy) + 150, paint);
+//                }
+
                 paint.setStyle(Paint.Style.STROKE);
                 paint.setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
-                paint.setStrokeWidth(8);
 
                 if (detection != null) {
                     canvas.drawRect(detection, paint);

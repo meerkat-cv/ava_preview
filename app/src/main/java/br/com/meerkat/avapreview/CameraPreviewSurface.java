@@ -22,8 +22,7 @@ import br.com.meerkat.ava.Ava;
  * Created by meerkat on 4/29/16.
  */
 public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.Callback{
-
-    private Ava.CameraType camType;
+    private Ava.CameraType camType = Ava.CameraType.FRONT_CAMERA;
     private int cameraWidth = 640;
     private int cameraHeight = 480;
     private SurfaceHolder mHolder;
@@ -77,6 +76,9 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
             mCamera.setParameters(parameters);
 
             mCamera.startPreview();
+            int w = mCamera.getParameters().getPreviewSize().width;
+            int h = mCamera.getParameters().getPreviewSize().height;
+            mCamDetector.setSize(w, h);
             mCamera.setPreviewCallback(mCamDetector);
 
         } catch (IOException e) {
@@ -105,16 +107,16 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
         public static final String TAG = "CameraDetectorCaller";
         private double fps;
         private long lastTime;
+        private long lastTest = System.nanoTime();
+        private boolean testingSubject = false;
+        private int spoofResult = 0;
         private Ava detector = new Ava();
+        private int w=100, h=100;
+
+        public void setSize(int W, int H) { w=W; h=H; }
 
         public void onPreviewFrame(byte[] data, Camera cam) {
             lastTime = System.nanoTime();
-            int w = cam.getParameters().getPreviewSize().width;
-            int h = cam.getParameters().getPreviewSize().height;
-
-            Log.v(TAG, "Frame size: " + w +     " " + h);
-
-
             //just to simulate a frontal camera :-) in case of emulator
             if (Build.FINGERPRINT.startsWith("generic")) {
                 data = CameraUtils.rotateNV21(data, w, h, 90);
@@ -123,26 +125,62 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                 w = aux;
             }
 
-            Ava.FaceAndLandmarks face_and_landmarks = detector.detectLargestFaceAndLandmarks(data, w, h, camType);
-            Rect det = face_and_landmarks.face_;
-            List<Point> landmarks = face_and_landmarks.landmarks_;
-            Log.v(TAG, "faceDetection"+det);
+            if(System.nanoTime() - lastTest < 1000000000.0*5) {
+                Ava.FaceAndLandmarks face_and_landmarks = detector.detectLargestFaceAndLandmarks(data, w, h, camType);
+                Rect det = face_and_landmarks.face_;
+                List<Point> landmarks = face_and_landmarks.landmarks_;
 
-            fps = 1000000000.0 / (System.nanoTime() - lastTime);
-            if (overlay != null) {
-                overlay.setFPS(fps);
-                overlay.setRectangle(det);
-                overlay.setPoints(landmarks);
+                fps = 1000000000.0 / (System.nanoTime() - lastTime);
+                if (overlay != null) {
+                    overlay.setFPS(fps);
+                    overlay.setRectangle(det);
+                    overlay.setPoints(landmarks);
+                    overlay.setSpoofResult(spoofResult);
+                    overlay.setBlinks(0, 0);
+                }
+                return;
+            }
+            else {
+                testingSubject = true;
+                Ava.FaceLandmarksBlink face_and_landmarks = detector.blinkActivity(data, w, h, camType);
+                Rect det = face_and_landmarks.face_;
+                List<Point> landmarks = face_and_landmarks.landmarks_;
+                spoofResult = 0;
+                if(face_and_landmarks.status_ != Ava.SpoofStatus.PROCESSING) {
+                    if(face_and_landmarks.status_ == Ava.SpoofStatus.REAL_PERSON) {
+                        spoofResult = 1;
+                        lastTest = System.nanoTime();
+                    }
+                    else if(face_and_landmarks.status_ == Ava.SpoofStatus.FRAUD) {
+                        spoofResult = 2;
+                        lastTest = System.nanoTime();
+                    }
+                    else
+                        spoofResult = 3;
+
+                    testingSubject = false;
+                }
+
+                fps = 1000000000.0 / (System.nanoTime() - lastTime);
+                if (overlay != null) {
+                    overlay.setFPS(fps);
+                    overlay.setRectangle(det);
+                    overlay.setPoints(landmarks);
+                    overlay.setSpoofResult(spoofResult);
+                    overlay.setBlinks(0.0f, face_and_landmarks.conf_);
+                }
             }
         }
     }
 
     void changeCamera() {
         // first stop the current camera
-        mCamera.setPreviewCallback(null);
-        mCamera.stopPreview();
-        mHolder.removeCallback(this);
-        mCamera.release();
+        if(mCamera != null) {
+            mCamera.setPreviewCallback(null);
+            mCamera.stopPreview();
+            mHolder.removeCallback(this);
+            mCamera.release();
+        }
         mCamera = null;
 
         try {
@@ -154,12 +192,15 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                 mCamera = CameraUtils.openBackFacingCameraGingerbread();
                 camType = Ava.CameraType.BACK_CAMERA;
             }
+            int w = cameraWidth;
+            int h = cameraHeight;
             mCamera.setPreviewDisplay(mHolder);
             Camera.Parameters parameters = mCamera.getParameters();
             parameters.setPreviewSize(cameraWidth, cameraHeight);
             mCamera.setParameters(parameters);
 
             mCamera.startPreview();
+            mCamDetector.setSize(w, h);
             mCamera.setPreviewCallback(mCamDetector);
 
         } catch (IOException e) {
