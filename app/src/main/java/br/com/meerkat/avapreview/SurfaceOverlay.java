@@ -130,17 +130,17 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
                 paint.setStrokeWidth(8);
 
                 // Draw blinking debug
-                int   dx = canvas.getWidth()/(blinks.length+3);
-                float dy = 10*60.0f;
-                for(int i=0; i<blinks.length-1; i++) {
-                    int x1 = dx*(i+1);
-                    int x2 = dx*(i+2);
-                    canvas.drawLine(x1, (int)(blinks[i]*dy) + 300,
-                            x2, (int)(blinks[i+1]*dy) + 300, paint);
-
-                    canvas.drawLine(x1, (int)(blinks2[i]*dy) + 150,
-                            x2, (int)(blinks2[i+1]*dy) + 150, paint);
-                }
+//                int   dx = canvas.getWidth()/(blinks.length+3);
+//                float dy = 10*60.0f;
+//                for(int i=0; i<blinks.length-1; i++) {
+//                    int x1 = dx*(i+1);
+//                    int x2 = dx*(i+2);
+//                    canvas.drawLine(x1, (int)(blinks[i]*dy) + 300,
+//                            x2, (int)(blinks[i+1]*dy) + 300, paint);
+//
+//                    canvas.drawLine(x1, (int)(blinks2[i]*dy) + 150,
+//                            x2, (int)(blinks2[i+1]*dy) + 150, paint);
+//                }
 
                 paint.setStyle(Paint.Style.STROKE);
                 paint.setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));

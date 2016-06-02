@@ -167,26 +167,10 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                     overlay.setRectangle(det);
                     overlay.setPoints(landmarks);
                     overlay.setSpoofResult(spoofResult);
-                    overlay.setBlinks(getBlink(landmarks), face_and_landmarks.conf_);
+                    overlay.setBlinks(0.0f, face_and_landmarks.conf_);
                 }
             }
         }
-    }
-
-
-    private float getBlink(List<Point> landmarks) {
-        double blink = 0.0f;
-        if(landmarks.size() > 0) {
-            double dx_h = landmarks.get(39).x - landmarks.get(36).x;
-            double dy_h = landmarks.get(39).y - landmarks.get(36).y;
-            double dx_v = landmarks.get(41).x - landmarks.get(37).x;
-            double dy_v = landmarks.get(41).y - landmarks.get(37).y;
-
-            blink = Math.sqrt(dx_v*dx_v + dy_v*dy_v)/Math.sqrt(dx_h*dx_h + dy_h*dy_h);
-            Log.v(TAG, "Not zero!! "+String.valueOf(dx_h)+" with blink: "+String.valueOf(blink));
-        }
-
-        return (float)blink;
     }
 
     void changeCamera() {
@@ -208,8 +192,8 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                 mCamera = CameraUtils.openBackFacingCameraGingerbread();
                 camType = Ava.CameraType.BACK_CAMERA;
             }
-            int w = mCamera.getParameters().getPreviewSize().width;
-            int h = mCamera.getParameters().getPreviewSize().height;
+            int w = cameraWidth;
+            int h = cameraHeight;
             mCamera.setPreviewDisplay(mHolder);
             Camera.Parameters parameters = mCamera.getParameters();
             parameters.setPreviewSize(cameraWidth, cameraHeight);
