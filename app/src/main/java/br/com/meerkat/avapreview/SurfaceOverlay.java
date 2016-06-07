@@ -110,7 +110,8 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
                 if(spoofResult == 0)  paint_spoof.setColor(Color.WHITE);
                 if(spoofResult == 1)  paint_spoof.setColor(Color.GREEN);
                 if(spoofResult == 2)  paint_spoof.setColor(Color.RED);
-                if(spoofResult == 3)  paint_spoof.setColor(Color.BLUE);
+                if(spoofResult == 3)  paint_spoof.setColor(Color.CYAN);
+                if(spoofResult == 4)  paint_spoof.setColor(Color.BLUE);
                 paint_spoof.setStrokeWidth(60);
                 canvas.drawLine(0, 0, canvas.getWidth(), 0, paint_spoof);
                 canvas.drawLine(canvas.getWidth(), 0, canvas.getWidth(), canvas.getHeight(), paint_spoof);
@@ -148,6 +149,9 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
                 if (detection != null) {
                     canvas.drawRect(detection, paint);
                 }
+
+//                for(int i=0; i<landmarks.size(); i=i++)
+//                    canvas.drawPoint(landmarks.get(i).x, landmarks.get(i).y, paint_spoof);
 
                 // Draw landmarks mask
                 if (landmarks != null) {

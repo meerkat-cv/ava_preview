@@ -155,8 +155,10 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                         spoofResult = 2;
                         lastTest = System.nanoTime();
                     }
-                    else
+                    else if(face_and_landmarks.status_ == Ava.SpoofStatus.SHAKING)
                         spoofResult = 3;
+                    else
+                        spoofResult = 4;
 
                     testingSubject = false;
                 }
