@@ -169,7 +169,6 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                     overlay.setRectangle(det);
                     overlay.setPoints(landmarks);
                     overlay.setSpoofResult(spoofResult);
-                    overlay.setBlinks(0.0f, face_and_landmarks.conf_);
                 }
             }
         }
