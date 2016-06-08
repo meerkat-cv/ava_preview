@@ -142,7 +142,7 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
             }
             else {
                 testingSubject = true;
-                Ava.FaceLandmarksBlink face_and_landmarks = detector.blinkActivity(data, w, h, camType);
+                Ava.FaceLandmarksSpoof face_and_landmarks = detector.spoofDetection(data, w, h, camType);
                 Rect det = face_and_landmarks.face_;
                 List<Point> landmarks = face_and_landmarks.landmarks_;
                 spoofResult = 0;
