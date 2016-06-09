@@ -90,7 +90,7 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
                     c = mHolder.lockCanvas(null);
                     synchronized (mHolder) {
                         doDraw(c);
-                        sleep(30);
+                        sleep(10);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -155,12 +155,18 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
 
                 // Draw landmarks mask
                 if (landmarks != null) {
-                    if(landmarks.size() < 68)
-                        return;
                     Paint paint_pt = new Paint();
                     paint_pt.setStyle(Paint.Style.FILL);
                     paint_pt.setColor(Color.rgb(255,255,255));
-                    paint_pt.setStrokeWidth(6);
+                    paint_pt.setStrokeWidth(10);
+
+                    for(int i=0; i<landmarks.size(); i++) {
+                        Point land = landmarks.get(i);
+                        canvas.drawCircle(land.x, land.y, 4, paint_pt);
+//                        canvas.drawPoint(land.x, land.y, paint_pt);
+                    }
+                    if(landmarks.size() < 68)
+                        return;
 
                     Paint paint_mask = new Paint();
                     paint_mask.setStyle(Paint.Style.FILL);
