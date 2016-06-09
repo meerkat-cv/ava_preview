@@ -1,6 +1,7 @@
 package br.com.meerkat.avapreview;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
@@ -13,7 +14,10 @@ import android.os.Bundle;
 import android.support.v7.widget.AppCompatImageButton;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -22,7 +26,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import br.com.meerkat.ava.Ava;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     private CameraPreviewSurface preview;
     private SurfaceOverlay overlay;
 
@@ -39,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // should request permission if android api > 23
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -72,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             preview.linkOverlay(overlay);
         }
 
-        final AppCompatImageButton button = (AppCompatImageButton) findViewById(R.id.changeCamButton);
+        final ImageButton button = (ImageButton) findViewById(R.id.changeCamButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.v(TAG, "Change camera Button clicked!");
