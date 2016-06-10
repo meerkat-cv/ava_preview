@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatImageButton;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -77,12 +79,37 @@ public class MainActivity extends Activity {
         }
 
         final ImageButton button = (ImageButton) findViewById(R.id.changeCamButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Log.v(TAG, "Change camera Button clicked!");
-                preview.changeCamera();
+        button.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        ImageButton view = (ImageButton) v;
+                        view.getBackground().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
+                        v.invalidate();
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP:
+
+                        // Your action here on button click
+
+                    case MotionEvent.ACTION_CANCEL: {
+                        ImageButton view = (ImageButton) v;
+                        view.getBackground().clearColorFilter();
+                        view.invalidate();
+                        break;
+                    }
+                }
+                return true;
             }
         });
+//        button.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                Log.v(TAG, "Change camera Button clicked!");
+//                preview.changeCamera();
+//            }
+//        });
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
