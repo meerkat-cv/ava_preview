@@ -21,14 +21,15 @@
 
 
     <ImageButton
-        android:layout_width="200px"
-        android:layout_height="200px"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:id="@+id/changeCamButton"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_flip_camera"
+        android:src="@drawable/ic_switch_camera"
         android:scaleType="fitStart"
-        android:background="@null"/>
+        android:background="@null"
+        android:layout_margin="20dp"/>
 
 
 </RelativeLayout>
