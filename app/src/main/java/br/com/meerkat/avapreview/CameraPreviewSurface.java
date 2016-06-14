@@ -23,7 +23,7 @@ import br.com.meerkat.ava.Ava;
  */
 public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.Callback{
     private Ava.CameraType camType = Ava.CameraType.FRONT_CAMERA;
-    private int cameraWidth = 640;
+    private int cameraWidth = 720;
     private int cameraHeight = 480;
     private SurfaceHolder mHolder;
     private Camera mCamera;
@@ -64,6 +64,37 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
         mHolder.addCallback(this);
     }
 
+//    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
+//        // first, show us some info
+//        Log.v("SIZE", "Screen-size: "+w+" "+h);
+//        Log.v("SIZE", "aspect ratio: "+(double)h/w);
+//        final double ASPECT_TOLERANCE = 0.1;
+//        double targetRatio=(double)h / w;
+//
+//        if (sizes == null) return null;
+//
+//        Camera.Size optimalSize = null;
+//        double minDiff = Double.MAX_VALUE;
+//
+//        int targetHeight = h;
+//
+//        for (Camera.Size size : sizes) {
+//            double ratio = (double) size.width / size.height;
+//            Log.v("SIZE", "camera size: "+size.width+" "+size.height);
+//            Log.v("SIZE", "camera ratio: "+ratio);
+//            Log.v("SIZE", "diff: "+Math.abs(ratio - targetRatio));
+//            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
+//            if (Math.abs(size.height - targetHeight) < minDiff) {
+//                optimalSize = size;
+//                minDiff = Math.abs(size.height - targetHeight);
+//            }
+//        }
+//
+//        System.exit(10);
+//
+//        return optimalSize;
+//    }
+
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         try {
@@ -80,7 +111,6 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
             int h = mCamera.getParameters().getPreviewSize().height;
             mCamDetector.setSize(w, h);
             mCamera.setPreviewCallback(mCamDetector);
-
         } catch (IOException e) {
             Log.e(TAG, "Unable to open camera or set preview display!");
             mCamera.release();

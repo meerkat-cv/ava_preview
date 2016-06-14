@@ -79,37 +79,12 @@ public class MainActivity extends Activity {
         }
 
         final ImageButton button = (ImageButton) findViewById(R.id.changeCamButton);
-        button.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        ImageButton view = (ImageButton) v;
-                        view.getBackground().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
-                        v.invalidate();
-                        break;
-                    }
-                    case MotionEvent.ACTION_UP:
-
-                        // Your action here on button click
-
-                    case MotionEvent.ACTION_CANCEL: {
-                        ImageButton view = (ImageButton) v;
-                        view.getBackground().clearColorFilter();
-                        view.invalidate();
-                        break;
-                    }
-                }
-                return true;
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.v(TAG, "Change camera Button clicked!");
+                preview.changeCamera();
             }
         });
-//        button.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                Log.v(TAG, "Change camera Button clicked!");
-//                preview.changeCamera();
-//            }
-//        });
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
