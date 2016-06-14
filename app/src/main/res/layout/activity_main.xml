@@ -26,7 +26,7 @@
         android:id="@+id/changeCamButton"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_switch_camera"
+        android:src="@drawable/ic_flip_camera"
         android:scaleType="fitStart"
         android:background="@null"
         android:layout_margin="20dp"/>
@@ -38,10 +38,11 @@
         android:id="@+id/changeCamButton"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_ava_preview_launcher"
+        android:src="@drawable/ic_meerkat_logo"
         android:scaleType="fitStart"
         android:background="@null"
-        android:layout_margin="200dp"/>
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="320dp"/>
 
 
 </RelativeLayout>
