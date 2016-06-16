@@ -20,6 +20,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -67,6 +68,7 @@ public class MainActivity extends Activity {
                 overlay = (SurfaceOverlay) findViewById(R.id.surfaceOverlayView);
                 preview = (CameraPreviewSurface) findViewById(R.id.surfaceView);
                 preview.linkOverlay(overlay);
+                preview.setTextView((TextView)findViewById(R.id.statusText));
             }
         } else {
             Ava.copyLandmarkModel(this);
@@ -76,6 +78,7 @@ public class MainActivity extends Activity {
             overlay = (SurfaceOverlay) findViewById(R.id.surfaceOverlayView);
             preview = (CameraPreviewSurface) findViewById(R.id.surfaceView);
             preview.linkOverlay(overlay);
+            preview.setTextView((TextView) findViewById(R.id.statusText));
         }
 
         final ImageButton button = (ImageButton) findViewById(R.id.changeCamButton);

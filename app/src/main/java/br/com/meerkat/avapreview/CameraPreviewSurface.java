@@ -15,6 +15,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.content.res.Configuration;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
     private CameraDetectorCaller mCamDetector = new CameraDetectorCaller();
     public static final String TAG = "CameraPreviewSurface";
     public SurfaceOverlay overlay;
+    private TextView textView;
 
 
     public void linkOverlay(SurfaceOverlay _overlay) {
@@ -146,6 +148,11 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
         super.onFinishInflate();
     }
 
+    public void setTextView(TextView textView) {
+        this.textView = textView;
+    }
+
+
     public class CameraDetectorCaller implements Camera.PreviewCallback{
         public static final String TAG = "CameraDetectorCaller";
         private double fps;
@@ -204,6 +211,22 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                         spoofResult = 4;
 
                     testingSubject = false;
+                }
+
+                if(spoofResult == 0) {
+                    textView.setText("Analyzing face...");
+                }
+                if(spoofResult == 1) {
+                    textView.setText("Valid face!");
+                }
+                if(spoofResult == 2) {
+                    textView.setText("Invalid face!");
+                }
+                if(spoofResult == 3) {
+                    textView.setText("Camera shake");
+                }
+                if(spoofResult == 4) {
+                    textView.setText("Face too far...");
                 }
 
                 fps = 1000000000.0 / (System.nanoTime() - lastTime);

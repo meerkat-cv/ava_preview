@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -34,8 +35,7 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
     private int frameCount = 0;
     private SurfaceHolder mHolder;
     private double scale = 1.0;
-
-
+    
 //
 //    public SurfaceOverlay(Context context) {
 //        super(context);
@@ -74,6 +74,7 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
         curr_blink++;
     }
 
+
     class DrawingThread extends Thread {
 
         private boolean mRun;
@@ -107,16 +108,27 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
                 canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
                 Paint paint_spoof = new Paint();
-                if(spoofResult == 0)  paint_spoof.setColor(Color.WHITE);
-                if(spoofResult == 1)  paint_spoof.setColor(Color.GREEN);
-                if(spoofResult == 2)  paint_spoof.setColor(Color.RED);
-                if(spoofResult == 3)  paint_spoof.setColor(Color.CYAN);
-                if(spoofResult == 4)  paint_spoof.setColor(Color.BLUE);
-                paint_spoof.setStrokeWidth((int) (30*scale));
-                canvas.drawLine(0, 0, canvas.getWidth(), 0, paint_spoof);
-                canvas.drawLine(canvas.getWidth(), 0, canvas.getWidth(), canvas.getHeight(), paint_spoof);
+
+                if(spoofResult == 0) {
+                    paint_spoof.setColor(Color.argb(240, 255, 255, 255));
+                }
+                if(spoofResult == 1) {
+                    paint_spoof.setColor(Color.argb(240, 108, 198, 100));
+                }
+                if(spoofResult == 2) {
+                    paint_spoof.setColor(Color.argb(240, 255, 90, 79));
+                }
+                if(spoofResult == 3) {
+                    paint_spoof.setColor(Color.argb(240, 255, 165, 91));
+                }
+                if(spoofResult == 4) {
+                    paint_spoof.setColor(Color.argb(240, 90, 108, 188));
+                }
+                paint_spoof.setStrokeWidth((int) (30 * scale));
+//                canvas.drawLine(0, 0, canvas.getWidth(), 0, paint_spoof);
+//                canvas.drawLine(canvas.getWidth(), 0, canvas.getWidth(), canvas.getHeight(), paint_spoof);
                 canvas.drawLine(canvas.getWidth(), canvas.getHeight(), 0, canvas.getHeight(), paint_spoof);
-                canvas.drawLine(0, canvas.getHeight(), 0, 0, paint_spoof);
+//                canvas.drawLine(0, canvas.getHeight(), 0, 0, paint_spoof);
 
                 Paint paint = new Paint();
 
