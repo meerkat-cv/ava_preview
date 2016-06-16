@@ -112,7 +112,7 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
                 if(spoofResult == 2)  paint_spoof.setColor(Color.RED);
                 if(spoofResult == 3)  paint_spoof.setColor(Color.CYAN);
                 if(spoofResult == 4)  paint_spoof.setColor(Color.BLUE);
-                paint_spoof.setStrokeWidth(60);
+                paint_spoof.setStrokeWidth((int) (30*scale));
                 canvas.drawLine(0, 0, canvas.getWidth(), 0, paint_spoof);
                 canvas.drawLine(canvas.getWidth(), 0, canvas.getWidth(), canvas.getHeight(), paint_spoof);
                 canvas.drawLine(canvas.getWidth(), canvas.getHeight(), 0, canvas.getHeight(), paint_spoof);
@@ -124,24 +124,11 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
                 paint.setTextAlign(Paint.Align.LEFT);
 
                 paint.setStyle(Paint.Style.FILL);
-                paint.setTextSize(40);
-                canvas.drawText("FPS:" + String.format("%.2f", getFPS()), 60, 60, paint);
+                paint.setTextSize((int) (20*scale));
+                canvas.drawText("FPS:" + String.format("%.2f", getFPS()), (int)(30*scale), (int)(40*scale), paint);
 
                 paint.setColor(Color.GREEN);
                 paint.setStrokeWidth(8);
-
-                // Draw blinking debug
-//                int   dx = canvas.getWidth()/(blinks.length+3);
-//                float dy = 10*60.0f;
-//                for(int i=0; i<blinks.length-1; i++) {
-//                    int x1 = dx*(i+1);
-//                    int x2 = dx*(i+2);
-//                    canvas.drawLine(x1, (int)(blinks[i]*dy) + 300,
-//                            x2, (int)(blinks[i+1]*dy) + 300, paint);
-//
-//                    canvas.drawLine(x1, (int)(blinks2[i]*dy) + 150,
-//                            x2, (int)(blinks2[i+1]*dy) + 150, paint);
-//                }
 
                 paint.setStyle(Paint.Style.STROKE);
                 paint.setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
@@ -164,7 +151,7 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
                         Point land = landmarks.get(i);
                         canvas.drawCircle(land.x, land.y, 4, paint_pt);
                     }
-                    
+
                 }
             }
         }

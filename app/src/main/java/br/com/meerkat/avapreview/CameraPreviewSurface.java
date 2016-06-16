@@ -8,10 +8,14 @@ import android.graphics.RectF;
 import android.hardware.Camera;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.content.res.Configuration;
+import android.view.WindowManager;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +37,9 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
 
 
     public void linkOverlay(SurfaceOverlay _overlay) {
-        Log.v(TAG, "overlay is null: "+_overlay);
         overlay = _overlay;
 
-        Log.v(TAG, "orientation:" + getResources().getConfiguration().orientation);
-        double overlayScale = 2;
+        double overlayScale = defineOverlayScale();
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT &&
                 !Build.FINGERPRINT.startsWith("generic"))
             // once the overlay is set I can open the camera
@@ -46,6 +48,14 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
             overlay.getHolder().setFixedSize((int)overlayScale*cameraWidth, (int)overlayScale*cameraHeight);
         overlay.setScale(overlayScale);
 
+    }
+
+    private double defineOverlayScale() {
+        int screen_height = getResources().getDisplayMetrics().heightPixels;
+        if (screen_height > 2*cameraWidth)
+            return 2.0;
+        else
+            return 1.0;
     }
 
     public CameraPreviewSurface(Context context, AttributeSet attrs) {
@@ -64,36 +74,36 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
         mHolder.addCallback(this);
     }
 
-//    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
-//        // first, show us some info
-//        Log.v("SIZE", "Screen-size: "+w+" "+h);
-//        Log.v("SIZE", "aspect ratio: "+(double)h/w);
-//        final double ASPECT_TOLERANCE = 0.1;
-//        double targetRatio=(double)h / w;
-//
-//        if (sizes == null) return null;
-//
-//        Camera.Size optimalSize = null;
-//        double minDiff = Double.MAX_VALUE;
-//
-//        int targetHeight = h;
-//
-//        for (Camera.Size size : sizes) {
-//            double ratio = (double) size.width / size.height;
-//            Log.v("SIZE", "camera size: "+size.width+" "+size.height);
-//            Log.v("SIZE", "camera ratio: "+ratio);
-//            Log.v("SIZE", "diff: "+Math.abs(ratio - targetRatio));
-//            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
-//            if (Math.abs(size.height - targetHeight) < minDiff) {
-//                optimalSize = size;
-//                minDiff = Math.abs(size.height - targetHeight);
-//            }
-//        }
-//
-//        System.exit(10);
-//
-//        return optimalSize;
-//    }
+    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
+        // first, show us some info
+        Log.v("SIZE", "Screen-size: "+w+" "+h);
+        Log.v("SIZE", "aspect ratio: "+(double)h/w);
+        final double ASPECT_TOLERANCE = 0.1;
+        double targetRatio=(double)h / w;
+
+        if (sizes == null) return null;
+
+        Camera.Size optimalSize = null;
+        double minDiff = Double.MAX_VALUE;
+
+        int targetHeight = h;
+
+        for (Camera.Size size : sizes) {
+            double ratio = (double) size.width / size.height;
+            Log.v("SIZE", "camera size: "+size.width+" "+size.height);
+            Log.v("SIZE", "camera ratio: "+ratio);
+            Log.v("SIZE", "diff: "+Math.abs(ratio - targetRatio));
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
+            if (Math.abs(size.height - targetHeight) < minDiff) {
+                optimalSize = size;
+                minDiff = Math.abs(size.height - targetHeight);
+            }
+        }
+
+        System.exit(10);
+
+        return optimalSize;
+    }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -105,6 +115,9 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
             Camera.Parameters parameters = mCamera.getParameters();
             parameters.setPreviewSize(cameraWidth, cameraHeight);
             mCamera.setParameters(parameters);
+
+//            List<Camera.Size> mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
+//            getOptimalPreviewSize(mSupportedPreviewSizes, this.getWidth(), this.getHeight());
 
             mCamera.startPreview();
             int w = mCamera.getParameters().getPreviewSize().width;
