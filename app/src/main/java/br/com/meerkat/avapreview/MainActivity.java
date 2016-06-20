@@ -1,9 +1,11 @@
 package br.com.meerkat.avapreview;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
@@ -12,8 +14,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatImageButton;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -22,7 +29,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import br.com.meerkat.ava.Ava;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     private CameraPreviewSurface preview;
     private SurfaceOverlay overlay;
 
@@ -61,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 overlay = (SurfaceOverlay) findViewById(R.id.surfaceOverlayView);
                 preview = (CameraPreviewSurface) findViewById(R.id.surfaceView);
                 preview.linkOverlay(overlay);
+                preview.setTextView((TextView)findViewById(R.id.statusText));
             }
         } else {
             Ava.copyLandmarkModel(this);
@@ -70,9 +78,10 @@ public class MainActivity extends AppCompatActivity {
             overlay = (SurfaceOverlay) findViewById(R.id.surfaceOverlayView);
             preview = (CameraPreviewSurface) findViewById(R.id.surfaceView);
             preview.linkOverlay(overlay);
+            preview.setTextView((TextView) findViewById(R.id.statusText));
         }
 
-        final AppCompatImageButton button = (AppCompatImageButton) findViewById(R.id.changeCamButton);
+        final ImageButton button = (ImageButton) findViewById(R.id.changeCamButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.v(TAG, "Change camera Button clicked!");

@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ava-release/ava-release.iml" filepath="$PROJECT_DIR$/ava-release/ava-release.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ava_preview.iml" filepath="$PROJECT_DIR$/ava_preview.iml" />
       <module fileurl="file://$PROJECT_DIR$/ava_preview.iml" filepath="$PROJECT_DIR$/ava_preview.iml" />
     </modules>
   </component>
