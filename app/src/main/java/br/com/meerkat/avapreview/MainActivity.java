@@ -108,6 +108,12 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        preview.closeCamera();
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
 

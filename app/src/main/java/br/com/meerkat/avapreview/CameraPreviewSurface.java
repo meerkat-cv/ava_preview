@@ -37,6 +37,14 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
     public SurfaceOverlay overlay;
     private TextView textView;
 
+    public void closeCamera() {
+        if(mCamera != null) {
+            mCamera.setPreviewCallback(null);
+            mCamera.stopPreview();
+            mHolder.removeCallback(this);
+            mCamera.release();
+        }
+    }
 
     public void linkOverlay(SurfaceOverlay _overlay) {
         overlay = _overlay;
@@ -74,6 +82,7 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
     private void initCameraPreviewSurface() {
         mHolder = getHolder();
         mHolder.addCallback(this);
+        mCamDetector.endSpoof();
     }
 
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
@@ -109,6 +118,7 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        mCamDetector.endSpoof();
         try {
             if (null == mCamera) {
                 mCamera = CameraUtils.openFrontFacingCameraGingerbread();
@@ -140,11 +150,13 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
                               int height) {
+        mCamDetector.endSpoof();
     }
 
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+        mCamDetector.endSpoof();
     }
 
     @Override
@@ -167,7 +179,9 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
         private Ava detector = new Ava();
         private int w=100, h=100;
 
-        public void setSize(int W, int H) { w=W; h=H; }
+        public void endSpoof() { detector.endSpoofDetection(); }
+
+        public void setSize(int W, int H) { w=W; h=H; detector.endSpoofDetection(); }
 
         public void onPreviewFrame(byte[] data, Camera cam) {
             lastTime = System.nanoTime();
