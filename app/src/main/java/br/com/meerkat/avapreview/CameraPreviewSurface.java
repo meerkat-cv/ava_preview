@@ -113,6 +113,10 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
             if (null == mCamera) {
                 mCamera = CameraUtils.openFrontFacingCameraGingerbread();
             }
+            else {
+                mCamera.release();
+                mCamera = CameraUtils.openFrontFacingCameraGingerbread();
+            }
             mCamera.setPreviewDisplay(mHolder);
             Camera.Parameters parameters = mCamera.getParameters();
             parameters.setPreviewSize(cameraWidth, cameraHeight);
