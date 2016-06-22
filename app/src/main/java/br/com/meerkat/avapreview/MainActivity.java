@@ -30,9 +30,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import br.com.meerkat.ava.Ava;
 
 public class MainActivity extends Activity {
-    private CameraPreviewSurface preview;
+    private CameraPreviewSurface preview = null;
     private SurfaceOverlay overlay;
-
 
     private static final int REQUEST_CAMERA_RESULT = 1;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 112;
@@ -47,29 +46,55 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        boolean hasWritePermission = false;
+        boolean hasCameraPermission = false;
+
         // should request permission if android api > 23
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            boolean hasWritePermission = (ContextCompat.checkSelfPermission(this,
+            hasWritePermission = (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-            if (hasWritePermission == false) {
+
+            if(hasWritePermission == false) {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         REQUEST_WRITE_EXTERNAL_STORAGE);
-            }
-            Ava.copyLandmarkModel(this);
 
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
+                while(hasWritePermission == false) {
+                    try {
+                        Thread.sleep(50);                 //1000 milliseconds is one second.
+                        hasWritePermission = (ContextCompat.checkSelfPermission(this,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+                    } catch(InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+
+            hasCameraPermission = (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED);
+            if (hasCameraPermission == false) {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_RESULT);
-            } else {
-                setContentView(R.layout.activity_main);
 
-                overlay = (SurfaceOverlay) findViewById(R.id.surfaceOverlayView);
-                preview = (CameraPreviewSurface) findViewById(R.id.surfaceView);
-                preview.linkOverlay(overlay);
-                preview.setTextView((TextView)findViewById(R.id.statusText));
+                while(hasCameraPermission == false) {
+                    try {
+                        Thread.sleep(50);                 //1000 milliseconds is one second.
+                        hasCameraPermission = (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                                == PackageManager.PERMISSION_GRANTED);
+                    } catch(InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
             }
+
+            Ava.copyLandmarkModel(this);
+            setContentView(R.layout.activity_main);
+
+            overlay = (SurfaceOverlay) findViewById(R.id.surfaceOverlayView);
+            preview = (CameraPreviewSurface) findViewById(R.id.surfaceView);
+            preview.linkOverlay(overlay);
+            preview.setTextView((TextView)findViewById(R.id.statusText));
+
         } else {
             Ava.copyLandmarkModel(this);
 
@@ -100,6 +125,13 @@ public class MainActivity extends Activity {
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Cannot run application because camera service permission have not been granted", Toast.LENGTH_SHORT).show();
                 }
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
+            case REQUEST_WRITE_EXTERNAL_STORAGE:
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Cannot run application because write permission have not been granted", Toast.LENGTH_SHORT).show();
+                }
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -110,13 +142,15 @@ public class MainActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        preview.closeCamera();
+        if(preview != null) {
+            preview.closeCamera();
+            preview = null;
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
