@@ -13,6 +13,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatImageButton;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +44,7 @@ public class MainActivity extends Activity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private RelativeLayout aboutLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,16 +94,27 @@ public class MainActivity extends Activity {
             Ava.copyLandmarkModel(this);
             setContentView(R.layout.activity_main);
 
+            TextView t2 = (TextView) findViewById(R.id.aboutTextView);
+            t2.setMovementMethod(LinkMovementMethod.getInstance());
+
+            aboutLayout = (RelativeLayout) findViewById(R.id.relativeLayoutAbout);
+            aboutLayout.setVisibility(View.INVISIBLE);
+
             overlay = (SurfaceOverlay) findViewById(R.id.surfaceOverlayView);
             preview = (CameraPreviewSurface) findViewById(R.id.surfaceView);
             preview.linkOverlay(overlay);
             preview.setTextView((TextView)findViewById(R.id.statusText));
-
         } else {
             Ava.copyLandmarkModel(this);
 
             setContentView(R.layout.activity_main);
+            TextView t2 = (TextView) findViewById(R.id.aboutTextView);
+            t2.setMovementMethod(LinkMovementMethod.getInstance());
+//            TextView t2 = (TextView) findViewById(R.id.aboutTextView);
+//            Linkify.addLinks(t2, Linkify.WEB_URLS);
 
+            aboutLayout = (RelativeLayout) findViewById(R.id.relativeLayoutAbout);
+            aboutLayout.setVisibility(View.INVISIBLE);
             overlay = (SurfaceOverlay) findViewById(R.id.surfaceOverlayView);
             preview = (CameraPreviewSurface) findViewById(R.id.surfaceView);
             preview.linkOverlay(overlay);
@@ -111,6 +126,20 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Log.v(TAG, "Change camera Button clicked!");
                 preview.changeCamera();
+            }
+        });
+
+        final ImageButton buttonMeerkat = (ImageButton) findViewById(R.id.meerkatButton);
+        buttonMeerkat.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                aboutLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
+        final ImageButton buttonCloseWindow = (ImageButton) findViewById(R.id.closeWindowButton);
+        buttonCloseWindow.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                aboutLayout.setVisibility(View.INVISIBLE);
             }
         });
         // ATTENTION: This was auto-generated to implement the App Indexing API.
