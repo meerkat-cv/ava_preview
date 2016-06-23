@@ -42,6 +42,7 @@ public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
     private Tracker mTracker;
     private static long mUptime;
+    private static long mLoadTime;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -51,6 +52,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mLoadTime = System.currentTimeMillis();
         super.onCreate(savedInstanceState);
 
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
@@ -126,6 +128,13 @@ public class MainActivity extends Activity {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        Log.i(TAG, "Loading finished");
+        mTracker.send(new HitBuilders.TimingBuilder()
+                .setCategory("Action")
+                .setLabel("Load_finished")
+                .setValue(System.currentTimeMillis()-mLoadTime)
+                .build());
     }
 
     @Override
@@ -191,9 +200,9 @@ public class MainActivity extends Activity {
         super.onPause();
 
         Log.i(TAG, "Pausing");
-        mTracker.send(new HitBuilders.EventBuilder()
+        mTracker.send(new HitBuilders.TimingBuilder()
                 .setCategory("Action")
-                .setAction("Pausing")
+                .setLabel("Pausing")
                 .setValue(System.currentTimeMillis()-mUptime)
                 .build());
     }
@@ -218,9 +227,9 @@ public class MainActivity extends Activity {
         client.disconnect();
 
         Log.i(TAG, "Stopping");
-        mTracker.send(new HitBuilders.EventBuilder()
+        mTracker.send(new HitBuilders.TimingBuilder()
                 .setCategory("Action")
-                .setAction("Stopping")
+                .setLabel("Stopping")
                 .setValue(System.currentTimeMillis()-mUptime)
                 .build());
     }
