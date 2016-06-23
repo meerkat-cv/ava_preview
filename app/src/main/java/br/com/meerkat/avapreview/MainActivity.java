@@ -27,7 +27,11 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import br.com.meerkat.ava.Ava;
+
 
 public class MainActivity extends Activity {
     private CameraPreviewSurface preview = null;
@@ -36,6 +40,8 @@ public class MainActivity extends Activity {
     private static final int REQUEST_CAMERA_RESULT = 1;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 112;
     private static final String TAG = "MainActivity";
+    private Tracker mTracker;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -45,6 +51,9 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
 
         boolean hasWritePermission = false;
         boolean hasCameraPermission = false;
@@ -169,8 +178,8 @@ public class MainActivity extends Activity {
 
     @Override
     public void onStop() {
-        super.onStop();
 
+        super.onStop();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         Action viewAction = Action.newAction(
@@ -185,5 +194,12 @@ public class MainActivity extends Activity {
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+
+        Log.i(TAG, "Stopping");
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("Stopping")
+                .setValue(55)
+                .build());
     }
 }
