@@ -70,17 +70,17 @@ public class MainActivity extends Activity {
             hasWritePermission = (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
 
-            if(hasWritePermission == false) {
+            if (hasWritePermission == false) {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         REQUEST_WRITE_EXTERNAL_STORAGE);
 
-                while(hasWritePermission == false) {
+                while (hasWritePermission == false) {
                     try {
                         Thread.sleep(50);                 //1000 milliseconds is one second.
                         hasWritePermission = (ContextCompat.checkSelfPermission(this,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-                    } catch(InterruptedException ex) {
+                    } catch (InterruptedException ex) {
                         Thread.currentThread().interrupt();
                     }
                 }
@@ -92,46 +92,32 @@ public class MainActivity extends Activity {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_RESULT);
 
-                while(hasCameraPermission == false) {
+                while (hasCameraPermission == false) {
                     try {
                         Thread.sleep(50);                 //1000 milliseconds is one second.
                         hasCameraPermission = (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                                 == PackageManager.PERMISSION_GRANTED);
-                    } catch(InterruptedException ex) {
+                    } catch (InterruptedException ex) {
                         Thread.currentThread().interrupt();
                     }
                 }
             }
+        }
+        Ava.copyLandmarkModel(this);
 
-            Ava.copyLandmarkModel(this);
-            setContentView(R.layout.activity_main);
-
-            TextView t2 = (TextView) findViewById(R.id.aboutTextView);
-            t2.setMovementMethod(LinkMovementMethod.getInstance());
-
-            aboutLayout = (RelativeLayout) findViewById(R.id.relativeLayoutAbout);
-            aboutLayout.setVisibility(View.INVISIBLE);
-
-            overlay = (SurfaceOverlay) findViewById(R.id.surfaceOverlayView);
-            preview = (CameraPreviewSurface) findViewById(R.id.surfaceView);
-            preview.linkOverlay(overlay);
-            preview.setTextView((TextView)findViewById(R.id.statusText));
-        } else {
-            Ava.copyLandmarkModel(this);
-
-            setContentView(R.layout.activity_main);
-            TextView t2 = (TextView) findViewById(R.id.aboutTextView);
-            t2.setMovementMethod(LinkMovementMethod.getInstance());
+        setContentView(R.layout.activity_main);
+        TextView t2 = (TextView) findViewById(R.id.aboutTextView);
+        t2.setMovementMethod(LinkMovementMethod.getInstance());
 //            TextView t2 = (TextView) findViewById(R.id.aboutTextView);
 //            Linkify.addLinks(t2, Linkify.WEB_URLS);
 
-            aboutLayout = (RelativeLayout) findViewById(R.id.relativeLayoutAbout);
-            aboutLayout.setVisibility(View.INVISIBLE);
-            overlay = (SurfaceOverlay) findViewById(R.id.surfaceOverlayView);
-            preview = (CameraPreviewSurface) findViewById(R.id.surfaceView);
-            preview.linkOverlay(overlay);
-            preview.setTextView((TextView) findViewById(R.id.statusText));
-        }
+        aboutLayout = (RelativeLayout) findViewById(R.id.relativeLayoutAbout);
+        aboutLayout.setVisibility(View.INVISIBLE);
+        overlay = (SurfaceOverlay) findViewById(R.id.surfaceOverlayView);
+        preview = (CameraPreviewSurface) findViewById(R.id.surfaceView);
+        preview.linkOverlay(overlay);
+        preview.setTextView((TextView) findViewById(R.id.statusText));
+
 
         final ImageButton button = (ImageButton) findViewById(R.id.changeCamButton);
         button.setOnClickListener(new View.OnClickListener() {
