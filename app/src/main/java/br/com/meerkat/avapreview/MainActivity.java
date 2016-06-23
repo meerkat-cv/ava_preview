@@ -41,6 +41,7 @@ public class MainActivity extends Activity {
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 112;
     private static final String TAG = "MainActivity";
     private Tracker mTracker;
+    private static long mUptime;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -174,6 +175,27 @@ public class MainActivity extends Activity {
                 Uri.parse("android-app://br.com.meerkat.avapreview/http/host/path")
         );
         AppIndex.AppIndexApi.start(client, viewAction);
+
+        mUptime = System.currentTimeMillis();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mUptime = System.currentTimeMillis();
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Log.i(TAG, "Pausing");
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("Pausing")
+                .setValue(System.currentTimeMillis()-mUptime)
+                .build());
     }
 
     @Override
@@ -199,7 +221,7 @@ public class MainActivity extends Activity {
         mTracker.send(new HitBuilders.EventBuilder()
                 .setCategory("Action")
                 .setAction("Stopping")
-                .setValue(55)
+                .setValue(System.currentTimeMillis()-mUptime)
                 .build());
     }
 }
