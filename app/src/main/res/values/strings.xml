@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ava Preview</string>
-    <string name="app_name_version">Meerkat Ava v1.1</string>
+    <string name="app_name">Ava Face Spoofing Detector</string>
+    <string name="app_name_version">Meerkat Ava v1.2</string>
     <string name="txtCredits">Meerkat is a company specialized in Computer Vision. This app goes well with our facial recognition system. Take a look at <a href="http://www.meerkat.com.br/en/">our website</a>.</string>
 </resources>

@@ -36,7 +36,10 @@ import com.google.android.gms.analytics.Tracker;
 import br.com.meerkat.ava.Ava;
 
 
+
 public class MainActivity extends Activity {
+    // this should only be true if the google-services.json is provided in root folder
+
     private CameraPreviewSurface preview = null;
     private SurfaceOverlay overlay;
 
@@ -108,8 +111,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         TextView t2 = (TextView) findViewById(R.id.aboutTextView);
         t2.setMovementMethod(LinkMovementMethod.getInstance());
-//            TextView t2 = (TextView) findViewById(R.id.aboutTextView);
-//            Linkify.addLinks(t2, Linkify.WEB_URLS);
 
         aboutLayout = (RelativeLayout) findViewById(R.id.relativeLayoutAbout);
         aboutLayout.setVisibility(View.INVISIBLE);
@@ -122,7 +123,6 @@ public class MainActivity extends Activity {
         final ImageButton button = (ImageButton) findViewById(R.id.changeCamButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Log.v(TAG, "Change camera Button clicked!");
                 preview.changeCamera();
             }
         });
@@ -185,17 +185,12 @@ public class MainActivity extends Activity {
     @Override
     public void onStart() {
         super.onStart();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
+
         client.connect();
         Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Main Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
+                Action.TYPE_VIEW,
+                "Main Page",
                 Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app deep link URI is correct.
                 Uri.parse("android-app://br.com.meerkat.avapreview/http/host/path")
         );
         AppIndex.AppIndexApi.start(client, viewAction);

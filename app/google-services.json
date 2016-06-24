@@ -1,0 +1,64 @@
+{
+  "project_info": {
+    "project_number": "479028147513",
+    "project_id": "ava-face-spoofing-detector"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479028147513:android:c66db7372775a02c",
+        "android_client_info": {
+          "package_name": "ava_preview.apk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": ""
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479028147513:android:edc2a38994465176",
+        "android_client_info": {
+          "package_name": "br.com.meerkat.avapreview"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": ""
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-69792504-3"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
