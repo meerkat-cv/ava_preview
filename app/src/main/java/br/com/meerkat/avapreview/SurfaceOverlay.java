@@ -13,9 +13,16 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.AlphaAnimation;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import java.util.List;
+
+import br.com.meerkat.ava.Ava;
 
 import static java.util.Arrays.fill;
 
@@ -35,7 +42,9 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
     private int frameCount = 0;
     private SurfaceHolder mHolder;
     private double scale = 1.0;
-    
+    private FrameLayout flashPanel;
+    private boolean drawNow = true;
+
 //
 //    public SurfaceOverlay(Context context) {
 //        super(context);
@@ -63,7 +72,13 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
         this.scale = scale;
     }
 
-    public void setSpoofResult(int spoofResult) { this.spoofResult = spoofResult; }
+    public void setSpoofResult(int spoofResult) {
+        if (this.spoofResult == 0 && spoofResult == 1) {
+            this.flashScreen();
+            drawNow = false;
+        }
+        this.spoofResult = spoofResult;
+    }
 
     public void setBlinks(float blink1, float blink2) {
         if (curr_blink >= blinks.length)
@@ -72,6 +87,10 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
         blinks[curr_blink] = blink1;
         blinks2[curr_blink] = blink2;
         curr_blink++;
+    }
+
+    public void setFlashPanel(FrameLayout flashPanel) {
+        this.flashPanel = flashPanel;
     }
 
 
@@ -104,7 +123,7 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
         }
 
         private void doDraw(Canvas canvas) {
-            if (canvas != null) {
+            if (canvas != null && drawNow) {
                 canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
                 Paint paint_spoof = new Paint();
@@ -216,5 +235,22 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
     public void setFPS(double fps) {
         this.FPS[frameCount % FPS.length] = fps;
         frameCount++;
+    }
+
+    public void flashScreen() {
+
+        flashPanel.setVisibility(View.VISIBLE);
+
+        AlphaAnimation fade = new AlphaAnimation(1, 0);
+        fade.setDuration(50);
+        fade.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation anim) {
+                flashPanel.setVisibility(View.GONE);
+            }
+            public void onAnimationStart(Animation a) { }
+            public void onAnimationRepeat(Animation a) { }
+        });
+        flashPanel.startAnimation(fade);
     }
 }

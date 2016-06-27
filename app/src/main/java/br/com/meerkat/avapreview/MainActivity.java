@@ -20,7 +20,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -58,6 +60,7 @@ public class MainActivity extends Activity {
      */
     private GoogleApiClient client;
     private RelativeLayout aboutLayout;
+    private FrameLayout pnlFlash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +128,9 @@ public class MainActivity extends Activity {
         preview.linkOverlay(overlay);
         preview.setTextView((TextView) findViewById(R.id.statusText));
 
+
+        pnlFlash = (FrameLayout) findViewById(R.id.pnlFlash);
+        overlay.setFlashPanel(pnlFlash);
 
         final ImageButton button = (ImageButton) findViewById(R.id.changeCamButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -246,7 +252,10 @@ public class MainActivity extends Activity {
         mTracker.send(new HitBuilders.TimingBuilder()
                 .setCategory("Action")
                 .setLabel("Stopping")
-                .setValue(System.currentTimeMillis()-mUptime)
+                .setValue(System.currentTimeMillis() - mUptime)
                 .build());
     }
+
+
+
 }

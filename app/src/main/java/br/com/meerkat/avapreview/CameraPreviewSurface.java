@@ -101,9 +101,6 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
 
         for (Camera.Size size : sizes) {
             double ratio = (double) size.width / size.height;
-            Log.v("SIZE", "camera size: "+size.width+" "+size.height);
-            Log.v("SIZE", "camera ratio: "+ratio);
-            Log.v("SIZE", "diff: "+Math.abs(ratio - targetRatio));
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
             if (Math.abs(size.height - targetHeight) < minDiff) {
                 optimalSize = size;

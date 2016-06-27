@@ -96,7 +96,6 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_above="@+id/relativeLayout"
-            android:background="@drawable/layout_rounded_bg"
             android:id="@+id/linearLayout"
             android:weightSum="1">
 
@@ -136,6 +135,14 @@
 
         </LinearLayout>
     </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/pnlFlash"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#ffffff"
+        android:visibility="gone"/>
+
 
 
 </RelativeLayout>
