@@ -14,7 +14,9 @@ import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.content.res.Configuration;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -36,6 +38,7 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
     public static final String TAG = "CameraPreviewSurface";
     public SurfaceOverlay overlay;
     private TextView textView;
+    private RelativeLayout splashScreen;
 
     public void closeCamera() {
         if(mCamera != null) {
@@ -133,10 +136,12 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
 //            getOptimalPreviewSize(mSupportedPreviewSizes, this.getWidth(), this.getHeight());
 
             mCamera.startPreview();
+
             int w = mCamera.getParameters().getPreviewSize().width;
             int h = mCamera.getParameters().getPreviewSize().height;
             mCamDetector.setSize(w, h);
             mCamera.setPreviewCallback(mCamDetector);
+            splashScreen.setVisibility(View.INVISIBLE);
         } catch (IOException e) {
             Log.e(TAG, "Unable to open camera or set preview display!");
             mCamera.release();
@@ -163,6 +168,10 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
 
     public void setTextView(TextView textView) {
         this.textView = textView;
+    }
+
+    public void setSplashScreen(RelativeLayout splashScreen) {
+        this.splashScreen = splashScreen;
     }
 
 

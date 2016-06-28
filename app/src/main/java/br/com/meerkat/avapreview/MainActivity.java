@@ -132,6 +132,9 @@ public class MainActivity extends Activity {
         pnlFlash = (FrameLayout) findViewById(R.id.pnlFlash);
         overlay.setFlashPanel(pnlFlash);
 
+        RelativeLayout splashScreen = (RelativeLayout) findViewById(R.id.splashScreen);
+        preview.setSplashScreen(splashScreen);
+
         final ImageButton button = (ImageButton) findViewById(R.id.changeCamButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

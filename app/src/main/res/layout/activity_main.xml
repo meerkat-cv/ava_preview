@@ -143,6 +143,20 @@
         android:background="#ffffff"
         android:visibility="gone"/>
 
+    <RelativeLayout
+        android:id="@+id/splashScreen"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_horizontal"
+        android:background="#091b2b">
+        <br.com.meerkat.avapreview.ScalableImageView android:id="@+id/asplashScreen"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
+            android:background="@drawable/meerkat_logo_white"/>
+    </RelativeLayout>
+
 
 
 </RelativeLayout>
