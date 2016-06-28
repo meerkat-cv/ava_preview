@@ -2,28 +2,18 @@ package br.com.meerkat.avapreview;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Camera;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatImageButton;
 import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -132,9 +122,15 @@ public class MainActivity extends Activity {
         pnlFlash = (FrameLayout) findViewById(R.id.pnlFlash);
         overlay.setFlashPanel(pnlFlash);
 
+        FrameLayout resultLayout = (FrameLayout) findViewById(R.id.resultScreen);
+        overlay.setResultLayout(resultLayout);
+
+        ImageView resultImageView = (ImageView) findViewById(R.id.resultFace);
+        overlay.setResultImageView(resultImageView);
+
         RelativeLayout splashScreen = (RelativeLayout) findViewById(R.id.splashScreen);
         preview.setSplashScreen(splashScreen);
-
+        
         final ImageButton button = (ImageButton) findViewById(R.id.changeCamButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

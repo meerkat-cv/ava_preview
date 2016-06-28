@@ -157,6 +157,26 @@
             android:background="@drawable/meerkat_logo_white"/>
     </RelativeLayout>
 
+    <FrameLayout
+        android:id="@+id/resultScreen"
+
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="80dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:padding="10dp"
+        android:background="#f1efe3"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/resultFace"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+    </FrameLayout>
 
 
 </RelativeLayout>
