@@ -162,10 +162,10 @@
 
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="80dp"
-        android:layout_marginLeft="25dp"
-        android:layout_marginRight="25dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="70dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
         android:padding="10dp"
         android:background="#f1efe3"
         android:visibility="gone">
