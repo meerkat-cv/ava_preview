@@ -12,6 +12,7 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"/>
 
+    
     <br.com.meerkat.avapreview.CameraPreviewSurface
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -20,6 +21,27 @@
         android:layout_centerHorizontal="true"/>
 
 
+    <FrameLayout
+        android:id="@+id/resultScreen"
+
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:padding="10dp"
+        android:background="#f1efe3"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/resultFace"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+    </FrameLayout>
+    
     <RelativeLayout
         android:orientation="horizontal"
         android:background="#55000000"
@@ -62,6 +84,8 @@
 
 
     </RelativeLayout>
+
+
 
     <RelativeLayout
         android:orientation="vertical"
@@ -157,26 +181,7 @@
             android:background="@drawable/meerkat_logo_white"/>
     </RelativeLayout>
 
-    <FrameLayout
-        android:id="@+id/resultScreen"
 
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="70dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:padding="10dp"
-        android:background="#f1efe3"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/resultFace"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-
-    </FrameLayout>
 
 
 </RelativeLayout>

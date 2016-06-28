@@ -270,9 +270,10 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
             bitmap.setPixels(rgb_data, 0, cameraWidth, 0, 0, cameraWidth, cameraHeight);
 
             Matrix matrix = new Matrix();
-            matrix.preScale(1.0f, -1.0f); // flip horizontally
-            if (camType == Ava.CameraType.FRONT_CAMERA)
+            if (camType == Ava.CameraType.FRONT_CAMERA) {
+                matrix.preScale(1.0f, -1.0f); // flip horizontally
                 matrix.postRotate(-90);
+            }
             else
                 matrix.postRotate(90);
             Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
