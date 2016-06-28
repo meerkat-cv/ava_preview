@@ -33,6 +33,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import java.io.IOException;
+
 import br.com.meerkat.ava.Ava;
 
 
@@ -106,7 +108,11 @@ public class MainActivity extends Activity {
                 }
             }
         }
-        Ava.copyLandmarkModel(this);
+        try {
+            Ava.copyModelFiles(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         setContentView(R.layout.activity_main);
         TextView t2 = (TextView) findViewById(R.id.aboutTextView);
