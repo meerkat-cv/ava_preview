@@ -12,6 +12,7 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"/>
 
+    
     <br.com.meerkat.avapreview.CameraPreviewSurface
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -20,6 +21,27 @@
         android:layout_centerHorizontal="true"/>
 
 
+    <FrameLayout
+        android:id="@+id/resultScreen"
+
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:padding="10dp"
+        android:background="#f1efe3"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/resultFace"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+    </FrameLayout>
+    
     <RelativeLayout
         android:orientation="horizontal"
         android:background="#55000000"
@@ -63,6 +85,8 @@
 
     </RelativeLayout>
 
+
+
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="250dip"
@@ -96,7 +120,6 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_above="@+id/relativeLayout"
-            android:background="@drawable/layout_rounded_bg"
             android:id="@+id/linearLayout"
             android:weightSum="1">
 
@@ -136,6 +159,29 @@
 
         </LinearLayout>
     </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/pnlFlash"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#ffffff"
+        android:visibility="gone"/>
+
+    <RelativeLayout
+        android:id="@+id/splashScreen"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_horizontal"
+        android:background="#091b2b">
+        <br.com.meerkat.avapreview.ScalableImageView android:id="@+id/asplashScreen"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
+            android:background="@drawable/meerkat_logo_white"/>
+    </RelativeLayout>
+
+
 
 
 </RelativeLayout>

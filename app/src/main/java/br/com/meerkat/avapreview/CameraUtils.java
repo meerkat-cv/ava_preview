@@ -1,12 +1,8 @@
 package br.com.meerkat.avapreview;
 
 import android.hardware.Camera;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.util.Log;
-import android.view.SurfaceView;
 
 /**
  * Created by gfuhr on 4/29/16.
@@ -14,6 +10,34 @@ import android.view.SurfaceView;
 public class CameraUtils {
     public static final String TAG = "CameraUtils";
 
+    public static void YUV_NV21_TO_RGB(int[] argb, byte[] yuv, int width, int height) {
+        final int frameSize = width * height;
+
+        final int ii = 0;
+        final int ij = 0;
+        final int di = +1;
+        final int dj = +1;
+
+        int a = 0;
+        for (int i = 0, ci = ii; i < height; ++i, ci += di) {
+            for (int j = 0, cj = ij; j < width; ++j, cj += dj) {
+                int y = (0xff & ((int) yuv[ci * width + cj]));
+                int v = (0xff & ((int) yuv[frameSize + (ci >> 1) * width + (cj & ~1) + 0]));
+                int u = (0xff & ((int) yuv[frameSize + (ci >> 1) * width + (cj & ~1) + 1]));
+                y = y < 16 ? 16 : y;
+
+                int r = (int) (1.164f * (y - 16) + 1.596f * (v - 128));
+                int g = (int) (1.164f * (y - 16) - 0.813f * (v - 128) - 0.391f * (u - 128));
+                int b = (int) (1.164f * (y - 16) + 2.018f * (u - 128));
+
+                r = r < 0 ? 0 : (r > 255 ? 255 : r);
+                g = g < 0 ? 0 : (g > 255 ? 255 : g);
+                b = b < 0 ? 0 : (b > 255 ? 255 : b);
+
+                argb[a++] = 0xff000000 | (r << 16) | (g << 8) | b;
+            }
+        }
+    }
 
     public static byte[] rotateNV21(final byte[] yuv,
                                     final int width,

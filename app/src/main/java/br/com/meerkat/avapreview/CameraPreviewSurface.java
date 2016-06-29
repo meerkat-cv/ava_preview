@@ -1,24 +1,22 @@
 package br.com.meerkat.avapreview;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.hardware.Camera;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.content.res.Configuration;
-import android.view.WindowManager;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import br.com.meerkat.ava.Ava;
@@ -36,6 +34,7 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
     public static final String TAG = "CameraPreviewSurface";
     public SurfaceOverlay overlay;
     private TextView textView;
+    private RelativeLayout splashScreen;
 
     public void closeCamera() {
         if(mCamera != null) {
@@ -101,9 +100,6 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
 
         for (Camera.Size size : sizes) {
             double ratio = (double) size.width / size.height;
-            Log.v("SIZE", "camera size: "+size.width+" "+size.height);
-            Log.v("SIZE", "camera ratio: "+ratio);
-            Log.v("SIZE", "diff: "+Math.abs(ratio - targetRatio));
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
             if (Math.abs(size.height - targetHeight) < minDiff) {
                 optimalSize = size;
@@ -132,14 +128,13 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
             parameters.setPreviewSize(cameraWidth, cameraHeight);
             mCamera.setParameters(parameters);
 
-//            List<Camera.Size> mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
-//            getOptimalPreviewSize(mSupportedPreviewSizes, this.getWidth(), this.getHeight());
-
             mCamera.startPreview();
+
             int w = mCamera.getParameters().getPreviewSize().width;
             int h = mCamera.getParameters().getPreviewSize().height;
             mCamDetector.setSize(w, h);
             mCamera.setPreviewCallback(mCamDetector);
+            splashScreen.setVisibility(View.INVISIBLE);
         } catch (IOException e) {
             Log.e(TAG, "Unable to open camera or set preview display!");
             mCamera.release();
@@ -166,6 +161,10 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
 
     public void setTextView(TextView textView) {
         this.textView = textView;
+    }
+
+    public void setSplashScreen(RelativeLayout splashScreen) {
+        this.splashScreen = splashScreen;
     }
 
 
@@ -209,6 +208,7 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                 return;
             }
             else {
+                overlay.hideResult();
                 testingSubject = true;
                 Ava.FaceLandmarksSpoof face_and_landmarks = detector.spoofDetection(data, w, h, camType);
                 Rect det = face_and_landmarks.face_;
@@ -252,9 +252,35 @@ public class CameraPreviewSurface extends SurfaceView implements SurfaceHolder.C
                     overlay.setFPS(fps);
                     overlay.setRectangle(det);
                     overlay.setPoints(landmarks);
+
+                    // if the result changed to invalid or valid, set an image to the overlay
+                    if ((spoofResult == 1 || spoofResult == 2) && overlay.getSpoofResult()!=spoofResult) {
+                        displayResultOnOverlay(data);
+                    }
                     overlay.setSpoofResult(spoofResult);
                 }
             }
+        }
+
+        void displayResultOnOverlay(byte[] data) {
+            int[] rgb_data = new int[cameraWidth * cameraHeight];
+            CameraUtils.YUV_NV21_TO_RGB(rgb_data, data, cameraWidth, cameraHeight);
+
+            Bitmap bitmap = Bitmap.createBitmap(cameraWidth, cameraHeight, Bitmap.Config.ARGB_8888);
+            bitmap.setPixels(rgb_data, 0, cameraWidth, 0, 0, cameraWidth, cameraHeight);
+
+            Matrix matrix = new Matrix();
+            if (camType == Ava.CameraType.FRONT_CAMERA) {
+                matrix.preScale(1.0f, -1.0f); // flip horizontally
+                matrix.postRotate(-90);
+            }
+            else
+                matrix.postRotate(90);
+            Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+            overlay.setSpoofResult(spoofResult);
+            overlay.showResult(rotated);
+
         }
     }
 
