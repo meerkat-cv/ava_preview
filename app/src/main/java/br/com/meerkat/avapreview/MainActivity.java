@@ -65,25 +65,6 @@ public class MainActivity extends Activity {
 
         // should request permission if android api > 23
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            hasWritePermission = (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-
-            if (hasWritePermission == false) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        REQUEST_WRITE_EXTERNAL_STORAGE);
-
-                while (hasWritePermission == false) {
-                    try {
-                        Thread.sleep(50);                 //1000 milliseconds is one second.
-                        hasWritePermission = (ContextCompat.checkSelfPermission(this,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
-
             hasCameraPermission = (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                     == PackageManager.PERMISSION_GRANTED);
             if (hasCameraPermission == false) {
