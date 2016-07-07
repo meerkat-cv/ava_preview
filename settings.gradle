@@ -1,1 +1,1 @@
-include ':app', ':ava-release'
+include ':app'
