@@ -1,19 +1,26 @@
 package br.com.meerkat.avapreview;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.TextView;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AlphaAnimation;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import java.util.List;
 
@@ -35,12 +42,11 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
     private int frameCount = 0;
     private SurfaceHolder mHolder;
     private double scale = 1.0;
-    
-//
-//    public SurfaceOverlay(Context context) {
-//        super(context);
-//        initSurfaceOverlay();
-//    }
+    private FrameLayout flashPanel;
+
+    private ImageView resultImageView;
+    private FrameLayout resultLayout;
+
 
     public SurfaceOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -63,7 +69,12 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
         this.scale = scale;
     }
 
-    public void setSpoofResult(int spoofResult) { this.spoofResult = spoofResult; }
+    public void setSpoofResult(int spoofResult) {
+        if (this.spoofResult == 0 && spoofResult == 1) {
+            this.flashScreen();
+        }
+        this.spoofResult = spoofResult;
+    }
 
     public void setBlinks(float blink1, float blink2) {
         if (curr_blink >= blinks.length)
@@ -72,6 +83,47 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
         blinks[curr_blink] = blink1;
         blinks2[curr_blink] = blink2;
         curr_blink++;
+    }
+
+    public void setFlashPanel(FrameLayout flashPanel) {
+        this.flashPanel = flashPanel;
+    }
+
+    public int getSpoofResult() {
+        return spoofResult;
+    }
+
+
+    public void setResultImageView(ImageView resultImageView) {
+        this.resultImageView = resultImageView;
+    }
+
+    public void setResultLayout(FrameLayout resultLayout) {
+        this.resultLayout = resultLayout;
+    }
+
+
+    public void showResult(Bitmap resultImage) {
+        Drawable ob = new BitmapDrawable(getResources(), resultImage);
+        resultImageView.setBackground(ob);
+
+        if (spoofResult == 1) {
+            resultLayout.setBackgroundColor(Color.argb(240, 108, 198, 100));
+        }
+        else if (spoofResult == 2) {
+            resultLayout.setBackgroundColor(Color.argb(240, 255, 90, 79));
+        }
+        
+        resultLayout.setVisibility(View.VISIBLE);
+
+    }
+
+    public void hideResult() {
+        resultLayout.setVisibility(View.INVISIBLE);
+    }
+
+    public double getScale() {
+        return scale;
     }
 
 
@@ -105,30 +157,28 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
 
         private void doDraw(Canvas canvas) {
             if (canvas != null) {
+
                 canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
                 Paint paint_spoof = new Paint();
 
-                if(spoofResult == 0) {
+                if (spoofResult == 0) { // Analyzing face...
                     paint_spoof.setColor(Color.argb(240, 255, 255, 255));
                 }
-                if(spoofResult == 1) {
+                if (spoofResult == 1) { // Valid face!
                     paint_spoof.setColor(Color.argb(240, 108, 198, 100));
                 }
-                if(spoofResult == 2) {
+                if (spoofResult == 2) { // Invalid face!
                     paint_spoof.setColor(Color.argb(240, 255, 90, 79));
                 }
-                if(spoofResult == 3) {
+                if (spoofResult == 3) { // Camera shake
                     paint_spoof.setColor(Color.argb(240, 255, 165, 91));
                 }
-                if(spoofResult == 4) {
+                if (spoofResult == 4) { // Face too far...
                     paint_spoof.setColor(Color.argb(240, 90, 108, 188));
                 }
                 paint_spoof.setStrokeWidth((int) (30 * scale));
-//                canvas.drawLine(0, 0, canvas.getWidth(), 0, paint_spoof);
-//                canvas.drawLine(canvas.getWidth(), 0, canvas.getWidth(), canvas.getHeight(), paint_spoof);
                 canvas.drawLine(canvas.getWidth(), canvas.getHeight(), 0, canvas.getHeight(), paint_spoof);
-//                canvas.drawLine(0, canvas.getHeight(), 0, 0, paint_spoof);
 
                 Paint paint = new Paint();
 
@@ -136,8 +186,8 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
                 paint.setTextAlign(Paint.Align.LEFT);
 
                 paint.setStyle(Paint.Style.FILL);
-                paint.setTextSize((int) (20*scale));
-                canvas.drawText("FPS:" + String.format("%.2f", getFPS()), (int)(30*scale), (int)(40*scale), paint);
+                paint.setTextSize((int) (20 * scale));
+                canvas.drawText("FPS:" + String.format("%.2f", getFPS()), (int) (30 * scale), (int) (40 * scale), paint);
 
                 paint.setColor(Color.GREEN);
                 paint.setStrokeWidth(8);
@@ -149,29 +199,31 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
                     canvas.drawRect(detection, paint);
                 }
 
-//                for(int i=0; i<landmarks.size(); i=i++)
-//                    canvas.drawPoint(landmarks.get(i).x, landmarks.get(i).y, paint_spoof);
+                //                for(int i=0; i<landmarks.size(); i=i++)
+                //                    canvas.drawPoint(landmarks.get(i).x, landmarks.get(i).y, paint_spoof);
 
                 // Draw landmarks mask
                 if (landmarks != null) {
                     Paint paint_pt = new Paint();
                     paint_pt.setStyle(Paint.Style.FILL);
-                    paint_pt.setColor(Color.rgb(255,255,255));
+                    paint_pt.setColor(Color.rgb(255, 255, 255));
                     paint_pt.setStrokeWidth(10);
 
-                    for(int i=0; i<landmarks.size(); i++) {
+                    for (int i = 0; i < landmarks.size(); i++) {
                         Point land = landmarks.get(i);
                         canvas.drawCircle(land.x, land.y, 4, paint_pt);
                     }
 
                 }
+
+
             }
+
         }
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.v(TAG, "surfaceCreated!");
         holder.setFormat(PixelFormat.RGBA_8888);
 
         this.setZOrderOnTop(true);
@@ -216,5 +268,22 @@ public class SurfaceOverlay extends SurfaceView implements SurfaceHolder.Callbac
     public void setFPS(double fps) {
         this.FPS[frameCount % FPS.length] = fps;
         frameCount++;
+    }
+
+    public void flashScreen() {
+
+        flashPanel.setVisibility(View.VISIBLE);
+
+        AlphaAnimation fade = new AlphaAnimation(1, 0);
+        fade.setDuration(50);
+        fade.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation anim) {
+                flashPanel.setVisibility(View.GONE);
+            }
+            public void onAnimationStart(Animation a) { }
+            public void onAnimationRepeat(Animation a) { }
+        });
+        flashPanel.startAnimation(fade);
     }
 }
